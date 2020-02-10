@@ -1,0 +1,61 @@
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: cluster-1c9f-s5jcz
+    machine.openshift.io/cluster-api-machine-role: worker
+    machine.openshift.io/cluster-api-machine-type: worker
+  name: ssd-2a
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: cluster-1c9f-s5jcz
+      machine.openshift.io/cluster-api-machineset: ssd-2a
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: cluster-1c9f-s5jcz
+        machine.openshift.io/cluster-api-machine-role: worker
+        machine.openshift.io/cluster-api-machine-type: worker
+        machine.openshift.io/cluster-api-machineset: ssd-2a
+    spec:
+      metadata:
+        labels:
+          ssd: "true"
+      providerSpec:
+        value:
+          ami:
+            id: ami-0a0438a5e62dc0f9f
+          apiVersion: awsproviderconfig.openshift.io/v1beta1
+          blockDevices:
+          - ebs:
+              iops: 0
+              volumeSize: 120
+              volumeType: gp2
+          deviceIndex: 0
+          iamInstanceProfile:
+            id: cluster-1c9f-s5jcz-worker-profile
+          instanceType: m4.large
+          kind: AWSMachineProviderConfig
+          placement:
+            availabilityZone: us-east-2a
+            region: us-east-2
+          publicIp: null
+          securityGroups:
+          - filters:
+            - name: tag:Name
+              values:
+              - cluster-1c9f-s5jcz-worker-sg
+          subnet:
+            filters:
+            - name: tag:Name
+              values:
+              - cluster-1c9f-s5jcz-private-us-east-2a
+          tags:
+          - name: kubernetes.io/cluster/cluster-1c9f-s5jcz
+            value: owned
+          userDataSecret:
+            name: worker-user-data
+      versions:
+        kubelet: ""
